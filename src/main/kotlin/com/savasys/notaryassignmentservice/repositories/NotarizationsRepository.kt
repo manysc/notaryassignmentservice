@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface NotarizationsRepository : CrudRepository<Notarization, Long> {
 
-    fun findByStatus(status: NotarizationStatus): MutableIterable<Notarization>
+    fun findByStatus(status: NotarizationStatus): MutableList<Notarization>
 
     fun findByEscrowNumber(escrowNumber: String): Notarization?
 

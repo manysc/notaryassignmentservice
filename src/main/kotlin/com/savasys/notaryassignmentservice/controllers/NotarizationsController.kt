@@ -15,12 +15,34 @@ class NotarizationsController(private val repository: NotarizationsRepository) {
 
     @CrossOrigin
     @GetMapping("/")
-    fun geNotarizations(@RequestParam(required = false) status: NotarizationStatus?): MutableIterable<Notarization> {
+    fun getNotarizations(@RequestParam(required = false) status: NotarizationStatus?): MutableList<Notarization> {
         if (status != null) {
             return repository.findByStatus(status)
         }
 
-        return repository.findAll()
+        return repository.findAll().toMutableList()
+    }
+
+    @CrossOrigin
+    @GetMapping("/active")
+    fun getActiveNotarizations(): MutableIterable<Notarization> {
+        val activeNotarizations = repository.findByStatus(NotarizationStatus.NOT_SET)
+        activeNotarizations.addAll(repository.findByStatus(NotarizationStatus.AVAILABLE))
+        activeNotarizations.addAll(repository.findByStatus(NotarizationStatus.ASSIGNED))
+        activeNotarizations.addAll(repository.findByStatus(NotarizationStatus.RESCHEDULE))
+        activeNotarizations.addAll(repository.findByStatus(NotarizationStatus.IN_PROGRESS))
+        activeNotarizations.addAll(repository.findByStatus(NotarizationStatus.SIGNED))
+        activeNotarizations.addAll(repository.findByStatus(NotarizationStatus.DELIVERED))
+        return activeNotarizations
+    }
+
+    @CrossOrigin
+    @GetMapping("/inactive")
+    fun getInactiveNotarizations(): MutableIterable<Notarization> {
+        val inactiveNotarizations = repository.findByStatus(NotarizationStatus.COMPLETED)
+        inactiveNotarizations.addAll(repository.findByStatus(NotarizationStatus.CANCELLED))
+        inactiveNotarizations.addAll(repository.findByStatus(NotarizationStatus.REJECTED))
+        return inactiveNotarizations
     }
 
     @CrossOrigin
