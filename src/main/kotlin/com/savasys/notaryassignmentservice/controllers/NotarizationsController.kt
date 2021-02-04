@@ -37,6 +37,17 @@ class NotarizationsController(private val repository: NotarizationsRepository) {
     }
 
     @CrossOrigin
+    @GetMapping("/inProgress")
+    fun getInProgressNotarizations(): MutableIterable<Notarization> {
+        val inProgressNotarizations = repository.findByStatus(NotarizationStatus.ASSIGNED)
+        inProgressNotarizations.addAll(repository.findByStatus(NotarizationStatus.RESCHEDULE))
+        inProgressNotarizations.addAll(repository.findByStatus(NotarizationStatus.IN_PROGRESS))
+        inProgressNotarizations.addAll(repository.findByStatus(NotarizationStatus.SIGNED))
+        inProgressNotarizations.addAll(repository.findByStatus(NotarizationStatus.DELIVERED))
+        return inProgressNotarizations
+    }
+
+    @CrossOrigin
     @GetMapping("/inactive")
     fun getInactiveNotarizations(): MutableIterable<Notarization> {
         val inactiveNotarizations = repository.findByStatus(NotarizationStatus.COMPLETED)
